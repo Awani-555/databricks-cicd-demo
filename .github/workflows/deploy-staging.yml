@@ -54,6 +54,15 @@ jobs:
             --profile DEFAULT \
             /Workspace/Shared/apps/databricks-cicd-demo-pr-${PR_NUMBER}/app.yaml
 
+      - name: Upload requirements.txt to workspace
+        run: |
+          databricks workspace import \
+            --file ./requirements.txt \
+            --format RAW \
+            --overwrite \
+            --profile DEFAULT \
+            /Workspace/Shared/apps/databricks-cicd-demo-pr-${PR_NUMBER}/requirements.txt
+
       - name: Create staging app if not exists
         run: |
           databricks apps create databricks-cicd-demo-pr-${PR_NUMBER} \

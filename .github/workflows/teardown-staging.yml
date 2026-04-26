@@ -1,0 +1,28 @@
+name: Teardown Staging App
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  teardown:
+    runs-on: ubuntu-latest
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Destroy staging app
+        run: >
+          databricks bundle destroy
+          -t staging
+          --auto-approve
+          --var "app_name=databricks-cicd-demo-pr-${{ github.event.pull_request.number }}"

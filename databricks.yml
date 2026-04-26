@@ -1,0 +1,24 @@
+bundle:
+  name: databricks-cicd-demo
+
+variables:
+  app_name:
+    description: Name of the Databricks App to deploy
+    default: databricks-cicd-demo-app
+
+resources:
+  apps:
+    web_app:
+      name: ${var.app_name}
+      source_code_path: ./app
+
+targets:
+  staging:
+    mode: development
+    workspace:
+      host: https://dbc-5374d873-cd53.cloud.databricks.com
+
+  prod:
+    mode: production
+    workspace:
+      host: https://dbc-5374d873-cd53.cloud.databricks.com

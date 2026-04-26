@@ -15,6 +15,7 @@ jobs:
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      DATABRICKS_USERNAME: awaniarsh05@gmail.com
       APP_ENV: staging
       PR_NUMBER: ${{ github.event.pull_request.number }}
     steps:
@@ -24,12 +25,24 @@ jobs:
       - name: Install Databricks CLI
         run: curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
+      - name: Configure Databricks CLI profile
+        run: >
+          databricks configure --profile DEFAULT
+          --host "${DATABRICKS_HOST}"
+          --token "${DATABRICKS_TOKEN}"
+
+      - name: Upload app source to workspace
+        run: >
+          databricks workspace import-dir ./app
+          /Workspace/Users/${DATABRICKS_USERNAME}/apps/databricks-cicd-demo-pr-${PR_NUMBER}
+          --profile DEFAULT
+          --overwrite
+
       - name: Deploy staging app
         run: >
           databricks apps deploy databricks-cicd-demo-pr-${PR_NUMBER}
-          --source-code-path ./app
-          --host ${DATABRICKS_HOST}
-          --token ${DATABRICKS_TOKEN}
+          --source-code-path /Workspace/Users/${DATABRICKS_USERNAME}/apps/databricks-cicd-demo-pr-${PR_NUMBER}
+          --profile DEFAULT
 
       - name: Comment deployed app URL on PR
         uses: actions/github-script@v7

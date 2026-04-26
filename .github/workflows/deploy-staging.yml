@@ -30,12 +30,29 @@ jobs:
           --host "${DATABRICKS_HOST}"
           --token "${DATABRICKS_TOKEN}"
 
-      - name: Upload app source to workspace
-        run: >
-          databricks workspace import-dir ./app
-          /Workspace/Shared/apps/databricks-cicd-demo-pr-${PR_NUMBER}
-          --profile DEFAULT
-          --overwrite
+      - name: Create workspace directory
+        run: |
+          databricks workspace mkdirs \
+            /Workspace/Shared/apps/databricks-cicd-demo-pr-${PR_NUMBER} \
+            --profile DEFAULT
+
+      - name: Upload app.py to workspace
+        run: |
+          databricks workspace import \
+            --file ./app/app.py \
+            --language PYTHON \
+            --overwrite \
+            --profile DEFAULT \
+            /Workspace/Shared/apps/databricks-cicd-demo-pr-${PR_NUMBER}/app.py
+
+      - name: Upload app.yaml to workspace
+        run: |
+          databricks workspace import \
+            --file ./app/app.yaml \
+            --language NO_LANGUAGE \
+            --overwrite \
+            --profile DEFAULT \
+            /Workspace/Shared/apps/databricks-cicd-demo-pr-${PR_NUMBER}/app.yaml
 
       - name: Deploy staging app
         run: >

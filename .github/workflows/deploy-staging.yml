@@ -36,6 +36,12 @@ jobs:
             /Workspace/Shared/apps/databricks-cicd-demo-pr-${PR_NUMBER} \
             --profile DEFAULT
 
+      - name: Delete existing app.py if exists
+        run: |
+          databricks workspace delete \
+            /Workspace/Shared/apps/databricks-cicd-demo-pr-${PR_NUMBER}/app.py \
+            --profile DEFAULT || true
+
       - name: Upload app.py to workspace
         run: |
           databricks workspace import \

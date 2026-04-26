@@ -17,8 +17,10 @@ targets:
     mode: development
     workspace:
       host: https://dbc-5374d873-cd53.cloud.databricks.com
+      root_path: ~/bundles/${bundle.name}/${bundle.target}
 
   prod:
     mode: production
     workspace:
       host: https://dbc-5374d873-cd53.cloud.databricks.com
+      root_path: ~/bundles/${bundle.name}/${bundle.target}

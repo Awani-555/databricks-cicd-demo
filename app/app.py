@@ -17,7 +17,22 @@ def build_status_message() -> str:
 with gr.Blocks(title="Databricks CI/CD Demo App") as demo:
     gr.Markdown("# Databricks CI/CD Demo App")
     gr.Markdown(build_status_message())
+    gr.Markdown("## Loan Repayment Data")
+    gr.Dataframe(
+        headers=["Customer ID", "EMI Amount", "Status"],
+        value=[
+            ["CUST-1001", 1250, "Paid"],
+            ["CUST-1002", 980, "Pending"],
+            ["CUST-1003", 1575, "Overdue"],
+        ],
+        interactive=False,
+    )
 
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(
+        server_name="0.0.0.0",
+        server_port=int(os.getenv("DATABRICKS_APP_PORT", "8000")),
+        root_path=os.getenv("DATABRICKS_APP_ROOT_PATH", ""),
+        show_error=True
+    )

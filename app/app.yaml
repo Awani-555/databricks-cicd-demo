@@ -1,3 +1,7 @@
 command:
   - python
   - app.py
+
+dependencies:
+  - pypi:
+      package: gradio

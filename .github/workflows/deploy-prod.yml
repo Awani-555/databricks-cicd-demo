@@ -64,10 +64,20 @@ jobs:
             --profile DEFAULT \
             /Workspace/Shared/apps/databricks-cicd-demo-prod/requirements.txt
 
+      - name: Check if app exists
+        id: check_app
+        run: |
+          if databricks apps get databricks-cicd-demo-prod --profile DEFAULT 2>/dev/null; then
+            echo "APP_EXISTS=true" >> $GITHUB_OUTPUT
+          else
+            echo "APP_EXISTS=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Create app if not exists
+        if: steps.check_app.outputs.APP_EXISTS == 'false'
         run: |
           databricks apps create databricks-cicd-demo-prod \
-            --profile DEFAULT 2>/dev/null || true
+            --profile DEFAULT
 
       - name: Deploy app
         run: >

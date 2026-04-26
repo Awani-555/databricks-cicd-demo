@@ -54,6 +54,11 @@ jobs:
             --profile DEFAULT \
             /Workspace/Shared/apps/databricks-cicd-demo-pr-${PR_NUMBER}/app.yaml
 
+      - name: Create staging app if not exists
+        run: |
+          databricks apps create databricks-cicd-demo-pr-${PR_NUMBER} \
+            --profile DEFAULT || true
+
       - name: Deploy staging app
         run: >
           databricks apps deploy databricks-cicd-demo-pr-${PR_NUMBER}

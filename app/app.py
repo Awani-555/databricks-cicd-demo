@@ -32,5 +32,7 @@ with gr.Blocks(title="Databricks CI/CD Demo App") as demo:
 if __name__ == "__main__":
     demo.launch(
         server_name="0.0.0.0",
-        server_port=8000
+        server_port=int(os.getenv("DATABRICKS_APP_PORT", "8000")),
+        root_path=os.getenv("DATABRICKS_APP_ROOT_PATH", ""),
+        show_error=True
     )

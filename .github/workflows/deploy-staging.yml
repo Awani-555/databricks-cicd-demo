@@ -15,7 +15,7 @@ jobs:
     env:
       DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
       DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-      DATABRICKS_USERNAME: awaniarsh05@gmail.com
+      DB_USERNAME: awaniarsh05@gmail.com
       APP_ENV: staging
       PR_NUMBER: ${{ github.event.pull_request.number }}
     steps:
@@ -34,14 +34,14 @@ jobs:
       - name: Upload app source to workspace
         run: >
           databricks workspace import-dir ./app
-          /Workspace/Users/${DATABRICKS_USERNAME}/apps/databricks-cicd-demo-pr-${PR_NUMBER}
+          /Workspace/Users/${DB_USERNAME}/apps/databricks-cicd-demo-pr-${PR_NUMBER}
           --profile DEFAULT
           --overwrite
 
       - name: Deploy staging app
         run: >
           databricks apps deploy databricks-cicd-demo-pr-${PR_NUMBER}
-          --source-code-path /Workspace/Users/${DATABRICKS_USERNAME}/apps/databricks-cicd-demo-pr-${PR_NUMBER}
+          --source-code-path /Workspace/Users/${DB_USERNAME}/apps/databricks-cicd-demo-pr-${PR_NUMBER}
           --profile DEFAULT
 
       - name: Comment deployed app URL on PR

@@ -49,7 +49,7 @@ jobs:
         run: |
           databricks workspace import \
             --file ./app/app.yaml \
-            --language NO_LANGUAGE \
+            --format RAW \
             --overwrite \
             --profile DEFAULT \
             /Workspace/Shared/apps/databricks-cicd-demo-pr-${PR_NUMBER}/app.yaml

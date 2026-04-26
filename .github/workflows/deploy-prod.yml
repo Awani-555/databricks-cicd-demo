@@ -16,14 +16,61 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Databricks CLI
-        uses: databricks/setup-cli@main
+      - name: Install Databricks CLI
+        run: curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
 
-      - name: Validate bundle
-        run: databricks bundle validate -t prod
-
-      - name: Deploy production app
+      - name: Configure Databricks CLI profile
         run: >
-          databricks bundle deploy
-          -t prod
-          --var "app_name=databricks-cicd-demo-prod"
+          databricks configure --profile DEFAULT
+          --host "${DATABRICKS_HOST}"
+          --token "${DATABRICKS_TOKEN}"
+
+      - name: Create workspace directory
+        run: |
+          databricks workspace mkdirs \
+            /Workspace/Shared/apps/databricks-cicd-demo-prod \
+            --profile DEFAULT
+
+      - name: Delete existing app.py if exists
+        run: |
+          databricks workspace delete \
+            /Workspace/Shared/apps/databricks-cicd-demo-prod/app.py \
+            --profile DEFAULT || true
+
+      - name: Upload app.py to workspace
+        run: |
+          databricks workspace import \
+            --file ./app/app.py \
+            --format RAW \
+            --overwrite \
+            --profile DEFAULT \
+            /Workspace/Shared/apps/databricks-cicd-demo-prod/app.py
+
+      - name: Upload app.yaml to workspace
+        run: |
+          databricks workspace import \
+            --file ./app/app.yaml \
+            --format RAW \
+            --overwrite \
+            --profile DEFAULT \
+            /Workspace/Shared/apps/databricks-cicd-demo-prod/app.yaml
+
+      - name: Upload requirements.txt to workspace
+        run: |
+          databricks workspace import \
+            --file ./requirements.txt \
+            --format RAW \
+            --overwrite \
+            --profile DEFAULT \
+            /Workspace/Shared/apps/databricks-cicd-demo-prod/requirements.txt
+
+      - name: Create app if not exists
+        run: |
+          databricks apps create databricks-cicd-demo-prod \
+            --profile DEFAULT || true
+
+      - name: Deploy app
+        run: >
+          databricks apps deploy databricks-cicd-demo-prod
+          --source-code-path /Workspace/Shared/apps/databricks-cicd-demo-prod
+          --profile DEFAULT

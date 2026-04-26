@@ -12,10 +12,6 @@ resources:
       name: ${var.app_name}
       source_code_path: ./app
 
-permissions:
-  - user_name: awaniarsh05@gmail.com
-    level: CAN_MANAGE
-
 targets:
   staging:
     mode: development
